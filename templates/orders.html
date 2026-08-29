@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Order Enquiries — {{ business.name }}</title>
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;600;700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  body{font-family:'Work Sans',sans-serif;background:#fff6e6;color:#241708;margin:0;padding:40px;}
+  h1{font-family:'Space Mono',monospace;font-size:20px;letter-spacing:.05em;margin-bottom:24px;}
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:4px;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,.08);}
+  th,td{text-align:left;padding:12px 16px;border-bottom:1px solid #eee0c8;font-size:14px;}
+  th{background:#f0431d;color:#fff6e6;font-weight:700;text-transform:uppercase;font-size:11px;letter-spacing:.05em;}
+  tr:last-child td{border-bottom:none;}
+  .empty{padding:40px;text-align:center;color:#8a7359;}
+  .back{display:inline-block;margin-bottom:20px;color:#c72c0e;font-weight:600;text-decoration:none;}
+</style>
+</head>
+<body>
+  <a class="back" href="/">&larr; Back to site</a>
+  <h1>ORDER ENQUIRIES — {{ orders|length }} TOTAL</h1>
+  {% if orders %}
+  <table>
+    <tr><th>#</th><th>Received</th><th>Name</th><th>Phone</th><th>Cut</th><th>Qty</th><th>Notes</th></tr>
+    {% for o in orders %}
+    <tr>
+      <td>{{ o.id }}</td>
+      <td>{{ o.created_at }}</td>
+      <td>{{ o.name }}</td>
+      <td>{{ o.phone }}</td>
+      <td>{{ o.cut }}</td>
+      <td>{{ o.quantity }}</td>
+      <td>{{ o.notes }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <div class="empty">No enquiries yet.</div>
+  {% endif %}
+</body>
+</html>

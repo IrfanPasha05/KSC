@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ business.name }} — Fresh. Hygienic. Quality Assured.</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Work+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="grain"></div>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-stack">
+      {% for category, message in messages %}
+        <div class="flash flash-{{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<header id="siteHeader">
+  <div class="wrap">
+    <nav>
+      <a class="brand" href="#top">
+        <span class="badge-mark">
+          <span class="l l-k">K</span><span class="l l-s">S</span><span class="l l-c">C</span>
+        </span>
+        <span class="brand-word">KSC<span>Wholesale Chicken</span></span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#cuts">The Cuts</a></li>
+        <li><a href="#order-sheet">Order Sheet</a></li>
+        <li><a href="#contact">Enquire</a></li>
+        <li><a href="#contact">Visit Us</a></li>
+      </ul>
+      <a class="call-btn" href="tel:{{ business.phone_tel }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+        {{ business.phone_display }}
+      </a>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow">Premium Quality · 100% Fresh</span>
+      <h1 class="logo-hero">
+        <span class="l l-k">K</span><span class="l l-s">S</span><span class="l l-c">C</span>
+      </h1>
+      <div class="sub">Wholesale Chicken</div>
+      <p class="lede">Slaughtered, cut and delivered the same morning. <b>KSC</b> serves home kitchens as well as restaurants, biryani houses, caterers and hotels across Bengaluru with chicken that's <b>fresh, hygienic and quality assured</b> — nothing frozen, nothing held back.</p>
+      <div class="hero-ctas">
+        <a class="btn-solid" href="tel:{{ business.phone_tel }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+          Call to Order
+        </a>
+        <a class="btn-ghost" href="#cuts">
+          Explore the Cuts
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div><b>100%</b><span>Fresh, never frozen</span></div>
+        <div><b>20+</b><span>Cuts &amp; formats</span></div>
+        <div><b>Retail</b><span>&amp; wholesale, both welcome</span></div>
+      </div>
+    </div>
+    <div class="hero-emblem">
+      <svg class="emblem-ring" viewBox="0 0 400 400" fill="none">
+        <defs>
+          <path id="ringpath" d="M 200,200 m -150,0 a 150,150 0 1,1 300,0 a 150,150 0 1,1 -300,0"/>
+        </defs>
+        <circle cx="200" cy="200" r="185" stroke="rgba(255,209,102,.45)" stroke-width="1"/>
+        <circle cx="200" cy="200" r="150" stroke="rgba(255,209,102,.6)" stroke-width="1" stroke-dasharray="2 6"/>
+        <text font-family="Space Mono, monospace" font-size="13" letter-spacing="6" fill="#ffd166">
+          <textPath href="#ringpath" startOffset="0%">FRESH · HYGIENIC · QUALITY ASSURED · FRESH · HYGIENIC · QUALITY ASSURED ·</textPath>
+        </text>
+      </svg>
+      <div class="emblem-photo">
+        <img src="{{ url_for('static', filename='images/live-chicken.jpg') }}" alt="A healthy live chicken — the start of KSC's farm-to-counter quality promise">
+      </div>
+      <div class="ribbon">100% FRESH</div>
+    </div>
+  </div>
+  <div class="scroll-cue"><span>Scroll</span><span class="line"></span></div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust">
+  <div class="wrap trust-grid">
+    <div class="trust-item">
+      <span class="ic ic-tomato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8l-9-5-9 5v8l9 5 9-5V8z"/><path d="M3 8l9 5 9-5M12 13v8"/></svg></span>
+      <p>Retail &amp; wholesale</p>
+    </div>
+    <div class="trust-item">
+      <span class="ic ic-mustard"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 17h14M5 17a2 2 0 01-2-2V9a2 2 0 012-2h9l5 5v3a2 2 0 01-2 2M9 17a2 2 0 11-4 0 2 2 0 014 0zm10 0a2 2 0 11-4 0 2 2 0 014 0z"/></svg></span>
+      <p>Bulk orders welcome</p>
+    </div>
+    <div class="trust-item">
+      <span class="ic ic-leaf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11V5l-8-3-8 3v6c0 6.5 8 11 8 11z"/></svg></span>
+      <p>Hygienically processed</p>
+    </div>
+    <div class="trust-item">
+      <span class="ic ic-tomato"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></span>
+      <p>Fresh &amp; quality assured</p>
+    </div>
+  </div>
+</div>
+
+<!-- CUT EXPLORER -->
+<section id="cuts">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Know Your Cut</span>
+      <h2>The order sheet, up close.</h2>
+      <p>Every cut shown here is our own — photographed straight off the counter. Pick a cut to see it and read how our kitchens use it.</p>
+    </div>
+
+    <div class="cutmap">
+      <div class="cutmap-figure reveal">
+        <img id="cutPhotoBg" class="cutmap-bg" src="{{ url_for('static', filename='images/' ~ cuts[cut_order[0]].img) }}" alt="" aria-hidden="true">
+        <img id="cutPhoto" class="cutmap-main" src="{{ url_for('static', filename='images/' ~ cuts[cut_order[0]].img) }}" alt="{{ cuts[cut_order[0]].name }}">
+      </div>
+
+      <div class="cutmap-panel reveal">
+        <span class="tag" id="cutTag">{{ cuts[cut_order[0]].tag }}</span>
+        <h3 id="cutName">{{ cuts[cut_order[0]].name }}</h3>
+        <p id="cutDesc">{{ cuts[cut_order[0]].desc }}</p>
+        <div class="cut-tabs" id="cutTabs">
+          {% for key in cut_order %}
+          <button class="cut-tab {{ 'active' if loop.first }}" data-cut="{{ key }}">{{ cuts[key].label }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER SHEET / CATEGORIES -->
+<section id="order-sheet" class="on-paper">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">The Full Order Sheet</span>
+      <h2>Five ways to order.</h2>
+      <p>From whole birds to organs to special marinated cuts — everything is cut fresh against your order, not pulled from cold storage.</p>
+    </div>
+
+    <div class="cat-grid">
+      {% for cat in categories %}
+      <div class="cat-card {{ 'wide' if cat.wide }} reveal">
+        <div class="img-wrap">
+          <img class="img-bg" src="{{ url_for('static', filename='images/' ~ cat.img) }}" alt="" aria-hidden="true">
+          <img class="img-main" src="{{ url_for('static', filename='images/' ~ cat.img) }}" alt="{{ cat.title }}">
+        </div>
+        <div class="cat-head"><h3>{{ cat.title }}</h3><span>{{ cat.num }}</span></div>
+        <ul {% if cat.wide %}style="columns:2;column-gap:24px;"{% endif %}>
+          {% for item in cat.products %}
+          <li>
+            {% if item_photos.get(item) %}
+            <img class="item-thumb" src="{{ url_for('static', filename='images/items/' ~ item_photos[item]) }}" alt="{{ item }}">
+            {% else %}
+            <span class="item-dot"></span>
+            {% endif %}
+            <span>{{ item }}</span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- PROPRIETOR -->
+<section id="proprietor" class="proprietor">
+  <div class="wrap prop-grid">
+    <div class="reveal">
+      <div class="prop-mono">MZ</div>
+    </div>
+    <div class="reveal">
+      <span class="eyebrow">A word from the proprietor</span>
+      <blockquote style="margin-top:20px;">"Every order is cut the same morning it ships. That's not a slogan here <span>—</span> it's the only way we've ever run this counter."</blockquote>
+      <div class="prop-name">
+        <b>{{ business.proprietor }}</b>
+        Proprietor, {{ business.name }}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BANNER -->
+<div class="banner">
+  <div class="wrap" style="position:relative;z-index:1;">
+    <h2>Supplying home kitchens, restaurants, hotels &amp; caterers — retail and wholesale, bulk orders welcome.</h2>
+    <a class="btn-solid" href="tel:{{ business.phone_tel }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.68 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.32 1.85.55 2.81.68A2 2 0 0 1 22 16.92z"/></svg>
+      Place a Bulk Order
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER / CONTACT -->
+<footer id="contact">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand reveal">
+        <span class="brand-word">KSC<span>Wholesale Chicken</span></span>
+        <p>Fresh, hygienic, quality-assured chicken — whole birds, precision cuts, organs and special-order marinades, prepared to spec for kitchens that can't compromise.</p>
+      </div>
+      <div class="foot-col reveal">
+        <h4>For Orders</h4>
+        <a class="call-huge line-link" href="tel:{{ business.phone_tel }}">{{ business.phone_display }}</a>
+        <p style="margin-top:10px;">Mon–Sun, early morning dispatch</p>
+        <div class="foot-actions">
+          <a class="btn-solid" href="tel:{{ business.phone_tel }}">Call Now</a>
+          <a class="btn-ghost" href="{{ business.whatsapp }}" target="_blank" rel="noopener">WhatsApp</a>
+        </div>
+      </div>
+      <div class="foot-col reveal">
+        <h4>Visit the Counter</h4>
+        {% for line in business.address_lines %}
+        <p style="margin:0;">{{ line }}</p>
+        {% endfor %}
+        <div class="foot-actions">
+          <a class="btn-ghost" href="https://www.google.com/maps/search/?api=1&query={{ business.address_full | urlencode }}" target="_blank" rel="noopener">Get Directions</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="map-embed reveal">
+      <iframe
+        src="https://maps.google.com/maps?q={{ business.address_full | urlencode }}&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        title="KSC Wholesale Chicken location">
+      </iframe>
+    </div>
+
+    <div class="bottom-bar">
+      <span>© {{ year }} {{ business.name }}. All rights reserved.</span>
+      <span>Fresh · Hygienic · Quality Assured</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Single source of truth: this comes straight from app.py's CUTS dict,
+  // so the tab-click JS can never drift out of sync with the server-rendered
+  // initial view (that was the bug — the JS used to keep its own hardcoded
+  // copy of filenames and it went stale).
+  window.CUT_DATA = {{ cuts | tojson }};
+  window.CUT_IMG_BASE = "{{ url_for('static', filename='images/') }}";
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
