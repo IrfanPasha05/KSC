@@ -1,8 +1,12 @@
 import os
+import sys
 import tempfile
 from pathlib import Path
 
 import pytest
+
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
 
 os.environ["DATABASE_PATH"] = str(Path(tempfile.gettempdir()) / "ksc-test-orders.db")
 os.environ["KSC_SECRET_KEY"] = "test-secret"
