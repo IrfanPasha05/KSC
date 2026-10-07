@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ksc-worker
+  namespace: ksc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ksc-worker
+  template:
+    metadata:
+      labels:
+        app: ksc-worker
+    spec:
+      containers:
+        - name: worker
+          image: ghcr.io/IrfanPasha05/KSC:latest
+          command: ["python","worker.py"]
+          env:
+            - name: KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: KAFKA_TOPIC_ORDER_CREATED
+              value: ksc.order.created
+            - name: KAFKA_GROUP_ID
+              value: ksc-notification-worker
+            - name: WHATSAPP_ENABLED
+              value: "false"
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
