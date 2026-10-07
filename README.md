@@ -1,52 +1,103 @@
-# KSC Wholesale Chicken — Flask Web Application
+# KSC Wholesale Chicken — Production Rebuild
 
-A real Python (Flask) web app for KSC Wholesale Chicken — not a static site.
-Content (categories, cuts, business info) is defined as plain Python data in
-`app.py`, rendered through Jinja2 templates, with a working order-enquiry
-form backed by SQLite.
+A production-style rebuild of the existing KSC Wholesale Chicken Flask application.
 
-## Run it locally
+## Architecture
+
+Customer order → Flask → SQLite → Kafka event → notification worker → optional WhatsApp notification.
+
+CI/CD: GitHub → GitHub Actions → tests/quality/security → Docker image → GHCR.
+
+Runtime: Docker Compose locally or Kubernetes/Minikube.
+
+## Stack
+
+- Python + Flask
+- SQLite with persistent storage
+- Apache Kafka
+- Docker / Docker Compose
+- Kubernetes / Minikube
+- GitHub Actions
+- GitHub Container Registry
+- Pytest, Ruff, Bandit, pip-audit
+- Trivy filesystem and image scans
+- Prometheus metrics
+- Optional official Meta WhatsApp Cloud API
+
+No AWS, PostgreSQL, Jenkins or Nexus.
+
+## Local development
 
 ```bash
-python -m venv venv
-source venv/bin/activate        # Windows: venv\Scripts\activate
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 python app.py
 ```
 
-Then open **http://127.0.0.1:5000**
+Or:
 
-## What's included
+```bash
+docker compose up --build
+```
 
-- `app.py` — Flask app: routes, business data (categories/cuts/address), and
-  the SQLite-backed order enquiry endpoint.
-- `templates/index.html` — main site (Jinja2, loops over the Python data).
-- `templates/orders.html` — plain internal listing of submitted enquiries at
-  `/orders` (no login — add auth before exposing this publicly).
-- `static/css/style.css` — full stylesheet (color system, layout, logo).
-- `static/js/main.js` — nav behaviour, scroll reveal, cut-photo tab swapping.
-- `static/images/` — product photography, cropped and cleaned from KSC's own
-  promotional poster.
+Open http://localhost:8000
 
-## Editing content
+## Kafka
 
-Everything text-based — category lists, cut descriptions, phone number,
-address — lives in the `BUSINESS`, `CUTS`, and `CATEGORIES` dictionaries at
-the top of `app.py`. Change the data there; the templates pick it up
-automatically.
+Orders are stored in SQLite and published to:
 
-## Before deploying publicly
+`ksc.order.created`
 
-- Change `app.config["SECRET_KEY"]` in `app.py` to a real secret.
-- Put a login in front of `/orders`, or remove the route.
-- Run behind a real WSGI server (gunicorn/uwsgi) instead of `python app.py`.
-- Consider swapping the SQLite file for a managed database if order volume
-  grows.
+The worker consumes that topic using consumer group:
 
-## Photography note
+`ksc-notification-worker`
 
-The product photos are cropped from KSC's own existing promotional poster —
-they're real, but modest resolution since they came from a phone-screenshot
-graphic. For a sharper site, replace the files in `static/images/` with
-higher-resolution originals (same filenames, or update the paths in
-`app.py`).
+## WhatsApp
+
+WhatsApp is optional and disabled by default.
+
+Set these only as environment variables or Kubernetes Secrets:
+
+- WHATSAPP_ENABLED
+- WHATSAPP_API_VERSION
+- WHATSAPP_PHONE_NUMBER_ID
+- WHATSAPP_ACCESS_TOKEN
+- WHATSAPP_ADMIN_NUMBER
+
+Never commit credentials.
+
+## Kubernetes
+
+```bash
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/kafka.yaml
+kubectl apply -f k8s/ksc.yaml
+kubectl apply -f k8s/worker.yaml
+kubectl apply -f k8s/network-policy.yaml
+kubectl -n ksc get pods
+kubectl -n ksc port-forward svc/ksc 8000:80
+```
+
+The application exposes:
+
+- /healthz
+- /readyz
+- /metrics
+
+SQLite is intentionally kept at one application replica because it is a single-file database. If the business later requires horizontal application scaling, move the state layer to a shared database.
+
+## GitHub Actions
+
+Pushes to `master` and `production-rebuild` run:
+
+1. Ruff
+2. Pytest
+3. Bandit
+4. pip-audit
+5. Trivy filesystem scan
+6. Docker build
+7. Push to GHCR
+8. Trivy image scan
