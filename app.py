@@ -10,17 +10,22 @@ Run locally:
 Then open http://127.0.0.1:5000
 """
 
+import os
 import sqlite3
 from datetime import datetime
 from pathlib import Path
 
 from flask import Flask, render_template, request, redirect, url_for, flash, g
+from prometheus_flask_exporter import PrometheusMetrics
+from kafka_client import publish_order_created
 
 BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "orders.db"
+DB_PATH = Path(os.getenv("DATABASE_PATH", str(BASE_DIR / "data" / "orders.db")))
+DB_PATH.parent.mkdir(parents=True, exist_ok=True)
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = "ksc-dev-secret-change-me"  # replace before real deployment
+app.config["SECRET_KEY"] = os.getenv("KSC_SECRET_KEY", "ksc-dev-secret-change-me")
+metrics = PrometheusMetrics(app)
 
 
 # ---------------------------------------------------------------------------
@@ -191,6 +196,7 @@ def close_db(exception=None):
 
 
 def init_db():
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(DB_PATH) as db:
         db.execute(
             """
@@ -238,15 +244,34 @@ def place_order():
         return redirect(url_for("home") + "#order")
 
     db = get_db()
-    db.execute(
-        "INSERT INTO orders (created_at, name, phone, cut, quantity, notes) "
-        "VALUES (?, ?, ?, ?, ?, ?)",
-        (datetime.now().isoformat(timespec="seconds"), name, phone, cut, quantity, notes),
+    created_at = datetime.now().isoformat(timespec="seconds")
+    cur = db.execute(
+        "INSERT INTO orders (created_at, name, phone, cut, quantity, notes) VALUES (?, ?, ?, ?, ?, ?)",
+        (created_at, name, phone, cut, quantity, notes),
     )
     db.commit()
+    order = {"id": cur.lastrowid, "created_at": created_at, "name": name, "phone": phone, "cut": cut, "quantity": quantity, "notes": notes}
+    try:
+        publish_order_created(order)
+    except Exception as exc:
+        app.logger.warning("Kafka publish failed: %s", exc)
 
     flash(f"Thanks {name} — we've got your enquiry and will call you on {phone} shortly.", "success")
     return redirect(url_for("home") + "#order")
+
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
+
+
+@app.get("/readyz")
+def readyz():
+    try:
+        get_db().execute("SELECT 1").fetchone()
+        return {"status": "ready"}
+    except sqlite3.Error:
+        return {"status": "not_ready"}, 503
 
 
 @app.route("/orders")
